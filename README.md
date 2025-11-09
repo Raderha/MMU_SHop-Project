@@ -155,4 +155,3 @@ npm run dev
 - MongoDB (Mongoose)
 - JWT (jsonwebtoken)
 - bcryptjs
-
