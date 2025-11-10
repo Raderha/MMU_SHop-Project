@@ -100,21 +100,21 @@ function FilterSidebar({ onFilterChange }) {
           <input
             type="radio"
             name="price"
-            value="4-12"
-            checked={filters.price === '4-12'}
+            value="under-10000"
+            checked={filters.price === 'under-10000'}
             onChange={(e) => handlePriceChange(e.target.value)}
           />
-          <span>$4-12$</span>
+          <span>10,000원 이하</span>
         </label>
         <label className="filter-radio">
           <input
             type="radio"
             name="price"
-            value="4-above"
-            checked={filters.price === '4-above'}
+            value="over-10000"
+            checked={filters.price === 'over-10000'}
             onChange={(e) => handlePriceChange(e.target.value)}
           />
-          <span>$4 & Above</span>
+          <span>10,000원 이상</span>
         </label>
       </div>
 

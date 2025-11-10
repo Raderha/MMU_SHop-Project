@@ -20,7 +20,9 @@ Shop_DB_Project/
 │   │   │   └── Products.jsx
 │   │   ├── modals/          # 모달 컴포넌트
 │   │   │   ├── LoginModal.jsx
-│   │   │   └── RegisterModal.jsx
+│   │   │   ├── RegisterModal.jsx
+│   │   │   ├── FindPW.jsx
+│   │   │   └── Modal.css
 │   │   ├── utils/           # 유틸리티
 │   │   │   └── api.js
 │   │   ├── App.jsx
@@ -60,17 +62,6 @@ Shop_DB_Project/
 - **MongoDB** (로컬 또는 원격 MongoDB 서버)
 - **npm** 또는 **yarn**
 
-### 환경 변수 설정
-
-Backend 폴더에 `.env` 파일을 생성하고 다음 내용을 추가하세요:
-
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/shopping_mall
-JWT_SECRET=your-secret-key-here
-NODE_ENV=development
-```
-
 ## 실행 방법
 
 ### 1. 의존성 설치
@@ -86,22 +77,6 @@ npm install
 cd Backend
 npm install
 ```
-
-### 2. MongoDB 실행
-
-MongoDB가 설치되어 있다면 MongoDB 서버를 실행하세요:
-
-```bash
-# Windows
-mongod
-
-# macOS/Linux
-sudo systemctl start mongod
-# 또는
-mongod
-```
-
-### 3. 서버 실행
 
 #### 백엔드 서버 실행 (포트 5000)
 ```bash
@@ -120,28 +95,11 @@ npm run dev
 - 프론트엔드: http://localhost:3000
 - 백엔드 API: http://localhost:5000
 
-## 데이터베이스 구조
-
 ### 컬렉션
 
 - **items**: 상품 정보
 - **users**: 사용자 정보
 - **orders**: 주문 정보
-
-### items 컬렉션 예시
-
-```javascript
-{
-  id: "pd01",
-  name: "Moris 샤프",
-  price: 2000,
-  cnt: 100,
-  color: "wood",
-  category: ["필기구", "학용품"],
-  tags: ["필기구", "샤프", "연필", "펜", "학용품"],
-  image: ["Moris Sharp.png"]
-}
-```
 
 ## 기술 스택
 
@@ -155,3 +113,16 @@ npm run dev
 - MongoDB (Mongoose)
 - JWT (jsonwebtoken)
 - bcryptjs
+- dotenv
+
+## API 엔드포인트
+
+### 인증 API
+- `POST /api/auth/register` - 회원가입
+- `POST /api/auth/login` - 로그인
+- `GET /api/auth/me` - 현재 사용자 정보 (인증 필요)
+
+### 상품 API
+- `GET /api/items` - 모든 상품 조회
+- `GET /api/items/:id` - 특정 상품 조회
+

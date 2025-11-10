@@ -42,11 +42,11 @@ function Home() {
   const applyFilters = () => {
     let filtered = [...items]
 
-    // 가격 필터
-    if (filters.price === '4-12') {
-      filtered = filtered.filter(item => item.price >= 4 && item.price <= 12)
-    } else if (filters.price === '4-above') {
-      filtered = filtered.filter(item => item.price >= 4)
+    // 가격 필터 (원화 기준)
+    if (filters.price === 'under-10000') {
+      filtered = filtered.filter(item => item.price <= 10000)
+    } else if (filters.price === 'over-10000') {
+      filtered = filtered.filter(item => item.price >= 10000)
     }
 
     // 색상 필터

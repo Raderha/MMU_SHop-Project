@@ -14,35 +14,36 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true
   },
-  password: {
+  pw: {
     type: String,
     required: true,
     minlength: 6
   },
-  role: {
+  address: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    required: true,
+    trim: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  number: {
+    type: [String],
+    required: false,
+    default: []
   }
 })
 
 // 비밀번호 해싱
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+  if (!this.isModified('pw')) {
     return next()
   }
   const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
+  this.pw = await bcrypt.hash(this.pw, salt)
   next()
 })
 
 // 비밀번호 비교 메서드
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password)
+  return await bcrypt.compare(candidatePassword, this.pw)
 }
 
 module.exports = mongoose.model('User', userSchema)

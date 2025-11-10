@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Header.css'
 import LoginModal from '../modals/LoginModal'
 import RegisterModal from '../modals/RegisterModal'
@@ -7,6 +7,43 @@ function Header({ cartCount = 0 }) {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [user, setUser] = useState(null)
+
+  // 로그인 상태 확인
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        console.error('Failed to parse user data:', e)
+      }
+    }
+  }, [])
+
+  // 로그인 성공 시 상태 업데이트를 위한 이벤트 리스너
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser))
+        } catch (e) {
+          console.error('Failed to parse user data:', e)
+        }
+      } else {
+        setUser(null)
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    // 페이지 로드 시에도 확인
+    handleStorageChange()
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const handleLoginClick = () => {
     setShowLoginModal(true)
@@ -28,6 +65,13 @@ function Header({ cartCount = 0 }) {
   const handleSwitchToLogin = () => {
     setShowRegisterModal(false)
     setShowLoginModal(true)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    window.location.reload()
   }
 
   return (
@@ -59,10 +103,22 @@ function Header({ cartCount = 0 }) {
               <span className="cart-badge">{cartCount}</span>
               🛒
             </div>
-            <button className="login-btn" onClick={handleLoginClick}>
-              <span>👤</span>
-              <span>Login</span>
-            </button>
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ color: '#333', fontSize: '0.95rem' }}>
+                  안녕하세요, {user.name}님
+                </span>
+                <button className="login-btn" onClick={handleLogout}>
+                  <span>👤</span>
+                  <span>로그아웃</span>
+                </button>
+              </div>
+            ) : (
+              <button className="login-btn" onClick={handleLoginClick}>
+                <span>👤</span>
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
