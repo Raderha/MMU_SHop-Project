@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Header.css'
 import LoginModal from '../modals/LoginModal'
 import RegisterModal from '../modals/RegisterModal'
 
 function Header({ cartCount = 0 }) {
+  const navigate = useNavigate()
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -74,16 +76,22 @@ function Header({ cartCount = 0 }) {
     window.location.reload()
   }
 
+  const handleLogoClick = () => {
+    navigate('/')
+  }
+
   return (
     <>
       <header className="header">
         <div className="header-container">
           <div className="header-left">
-            <div className="logo">
+            <div className="logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <span className="logo-icon">🛒</span>
               <span className="logo-text">MMU Mart</span>
             </div>
-            <div className="location">10115 New York</div>
+            {user?.address && (
+              <div className="location">{user.address}</div>
+            )}
           </div>
           
           <div className="header-center">

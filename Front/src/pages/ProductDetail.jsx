@@ -1,0 +1,125 @@
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import Header from '../components/Header'
+import ProductDetailView from '../components/ProductDetailView'
+import api from '../utils/api'
+
+function ProductDetail() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [item, setItem] = useState(null)
+  const [relatedItems, setRelatedItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (id) {
+      fetchProductDetail()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  const fetchProductDetail = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // 상품 상세 정보 가져오기
+      const response = await api.get(`/items/${id}`)
+      const productData = response.data
+      setItem(productData)
+
+      // 관련 상품 가져오기
+      await fetchRelatedItems(productData)
+    } catch (err) {
+      console.error('상품을 불러오는 중 오류 발생:', err)
+      setError('상품을 불러올 수 없습니다.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchRelatedItems = async (currentItem) => {
+    try {
+      // 모든 상품 가져오기
+      const response = await api.get('/items')
+      const allItems = response.data
+
+      // 현재 상품의 카테고리
+      const currentCategories = currentItem.category || []
+      
+      // 카테고리가 하나라도 겹치는 상품 찾기 (현재 상품 제외)
+      const related = []
+      for (const otherItem of allItems) {
+        // 현재 상품은 제외
+        if (otherItem._id === currentItem._id || otherItem.id === currentItem.id) {
+          continue
+        }
+
+        // 카테고리 비교
+        const otherCategories = otherItem.category || []
+        const hasCommonCategory = currentCategories.some(cat => 
+          otherCategories.includes(cat)
+        )
+
+        if (hasCommonCategory) {
+          related.push(otherItem)
+          // 최대 4개까지만
+          if (related.length >= 4) {
+            break
+          }
+        }
+      }
+
+      setRelatedItems(related)
+    } catch (err) {
+      console.error('관련 상품을 불러오는 중 오류 발생:', err)
+    }
+  }
+
+  const handleRelatedItemClick = (relatedItem) => {
+    // 관련 상품 클릭 시 해당 상품 상세 페이지로 이동
+    const itemId = relatedItem.id || relatedItem._id
+    if (itemId) {
+      navigate(`/product/${itemId}`)
+      // 스크롤을 맨 위로 이동
+      window.scrollTo(0, 0)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <Header cartCount={0} />
+        <div style={{ textAlign: 'center', padding: '4rem' }}>
+          <p>상품을 불러오는 중...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !item) {
+    return (
+      <div>
+        <Header cartCount={0} />
+        <div style={{ textAlign: 'center', padding: '4rem' }}>
+          <p>{error || '상품을 찾을 수 없습니다.'}</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="product-detail-page">
+      <Header cartCount={0} />
+      <ProductDetailView 
+        item={item} 
+        relatedItems={relatedItems}
+        onRelatedItemClick={handleRelatedItemClick}
+      />
+    </div>
+  )
+}
+
+export default ProductDetail
+

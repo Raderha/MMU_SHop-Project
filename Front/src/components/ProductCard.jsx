@@ -1,7 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import './ProductCard.css'
 
 function ProductCard({ item }) {
+  const navigate = useNavigate()
+
+  const handleCardClick = () => {
+    const itemId = item.id || item._id
+    if (itemId) {
+      navigate(`/product/${itemId}`)
+    }
+  }
   // 이미지 경로 가져오기 (배열의 0번 인덱스 사용)
   const getMainImage = () => {
     // 데이터베이스에 저장된 이미지 배열이 있고 0번 인덱스에 이미지가 있으면 사용
@@ -28,7 +37,7 @@ function ProductCard({ item }) {
   }
 
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={handleCardClick}>
       <div className="product-image-container">
         <img
           src={getMainImage()}

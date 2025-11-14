@@ -14,10 +14,12 @@ Shop_DB_Project/
 │   │   │   ├── Header.jsx
 │   │   │   ├── FilterSidebar.jsx
 │   │   │   ├── ProductCard.jsx
+│   │   │   ├── ProductDetailView.jsx
 │   │   │   └── Banner.jsx
 │   │   ├── pages/           # 페이지 컴포넌트
 │   │   │   ├── Home.jsx
-│   │   │   └── Products.jsx
+│   │   │   ├── Products.jsx
+│   │   │   └── ProductDetail.jsx
 │   │   ├── modals/          # 모달 컴포넌트
 │   │   │   ├── LoginModal.jsx
 │   │   │   ├── RegisterModal.jsx
@@ -100,29 +102,3 @@ npm run dev
 - **items**: 상품 정보
 - **users**: 사용자 정보
 - **orders**: 주문 정보
-
-## 기술 스택
-
-### Frontend
-- React 18
-- Vite
-- Axios
-
-### Backend
-- Express.js
-- MongoDB (Mongoose)
-- JWT (jsonwebtoken)
-- bcryptjs
-- dotenv
-
-## API 엔드포인트
-
-### 인증 API
-- `POST /api/auth/register` - 회원가입
-- `POST /api/auth/login` - 로그인
-- `GET /api/auth/me` - 현재 사용자 정보 (인증 필요)
-
-### 상품 API
-- `GET /api/items` - 모든 상품 조회
-- `GET /api/items/:id` - 특정 상품 조회
-
