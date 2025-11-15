@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import ProductDetailView from '../components/ProductDetailView'
 import api from '../utils/api'
+import { getCartItemCount } from '../utils/cart'
 
 function ProductDetail() {
   const { id } = useParams()
@@ -11,13 +12,30 @@ function ProductDetail() {
   const [relatedItems, setRelatedItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
     if (id) {
       fetchProductDetail()
     }
+    updateCartCount()
+    
+    // 장바구니 변경 시 카운트 업데이트
+    const handleCartUpdate = () => {
+      updateCartCount()
+    }
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+
+  const updateCartCount = () => {
+    const count = getCartItemCount()
+    setCartCount(count)
+  }
 
   const fetchProductDetail = async () => {
     try {
@@ -90,7 +108,7 @@ function ProductDetail() {
   if (loading) {
     return (
       <div>
-        <Header cartCount={0} />
+        <Header cartCount={cartCount} />
         <div style={{ textAlign: 'center', padding: '4rem' }}>
           <p>상품을 불러오는 중...</p>
         </div>
@@ -101,7 +119,7 @@ function ProductDetail() {
   if (error || !item) {
     return (
       <div>
-        <Header cartCount={0} />
+        <Header cartCount={cartCount} />
         <div style={{ textAlign: 'center', padding: '4rem' }}>
           <p>{error || '상품을 찾을 수 없습니다.'}</p>
         </div>
@@ -111,7 +129,7 @@ function ProductDetail() {
 
   return (
     <div className="product-detail-page">
-      <Header cartCount={0} />
+      <Header cartCount={cartCount} />
       <ProductDetailView 
         item={item} 
         relatedItems={relatedItems}

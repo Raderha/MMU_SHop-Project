@@ -15,18 +15,21 @@ Shop_DB_Project/
 │   │   │   ├── FilterSidebar.jsx
 │   │   │   ├── ProductCard.jsx
 │   │   │   ├── ProductDetailView.jsx
+│   │   │   ├── ShoppingCart.jsx
 │   │   │   └── Banner.jsx
 │   │   ├── pages/           # 페이지 컴포넌트
 │   │   │   ├── Home.jsx
 │   │   │   ├── Products.jsx
-│   │   │   └── ProductDetail.jsx
+│   │   │   ├── ProductDetail.jsx
+│   │   │   └── ShoppingCart.jsx
 │   │   ├── modals/          # 모달 컴포넌트
 │   │   │   ├── LoginModal.jsx
 │   │   │   ├── RegisterModal.jsx
 │   │   │   ├── FindPW.jsx
 │   │   │   └── Modal.css
 │   │   ├── utils/           # 유틸리티
-│   │   │   └── api.js
+│   │   │   ├── api.js
+│   │   │   └── cart.js        # 장바구니 관리 유틸리티
 │   │   ├── App.jsx
 │   │   └── index.jsx
 │   ├── index.html
@@ -92,13 +95,24 @@ cd Front
 npm run dev
 ```
 
-### 4. 브라우저에서 접속
+## 주요 기능
 
-- 프론트엔드: http://localhost:3000
-- 백엔드 API: http://localhost:5000
+### 사용자 인증
+- 회원가입 / 로그인 / 로그아웃
+- JWT 토큰 기반 인증
+- 비밀번호 찾기
 
-### 컬렉션
+### 상품 관리
+- 상품 목록 조회 및 필터링
+- 상품 상세 정보 조회
+- 카테고리별 상품 필터링
+- 가격 및 색상 필터링
 
-- **items**: 상품 정보
-- **users**: 사용자 정보
-- **orders**: 주문 정보
+### 장바구니 기능
+- 상품 장바구니 추가/제거
+- 장바구니 아이템 수량 조절
+- 장바구니 총액 계산
+- 배달비 계산 (2,500원 고정)
+- 할인 적용 (50,000원 이상 구매 시 5% 할인)
+- 프로모 코드 입력 기능
+- 관련 상품 추천 (Recommended Items)

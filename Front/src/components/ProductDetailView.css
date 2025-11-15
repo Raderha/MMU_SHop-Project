@@ -245,29 +245,62 @@
   transform: translateY(0);
 }
 
-.wishlist-btn {
-  width: 48px;
-  height: 48px;
-  border: 1px solid #ddd;
+.add-to-cart-btn {
+  padding: 0.875rem 1.5rem;
+  background-color: #7c3aed;
+  color: white;
+  border: none;
   border-radius: 8px;
-  background-color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  white-space: nowrap;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  gap: 0.5rem;
 }
 
-.wishlist-btn:hover {
-  border-color: #dc2626;
-  background-color: #fef2f2;
+.add-to-cart-btn:hover {
+  background-color: #6d28d9;
+  transform: translateY(-1px);
 }
 
-.wishlist-btn.active {
-  border-color: #dc2626;
-  background-color: #fef2f2;
+.add-to-cart-btn:active {
+  transform: translateY(0);
+}
+
+/* 사이즈 선택 */
+.product-size-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.size-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.size-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: white;
+  color: #333;
+  transition: border-color 0.2s;
+}
+
+.size-select:hover {
+  border-color: #7c3aed;
+}
+
+.size-select:focus {
+  outline: none;
+  border-color: #7c3aed;
 }
 
 /* 관련 상품 섹션 */

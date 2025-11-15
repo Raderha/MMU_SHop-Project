@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import './Header.css'
 import LoginModal from '../modals/LoginModal'
 import RegisterModal from '../modals/RegisterModal'
+import { getCartItemCount } from '../utils/cart'
 
-function Header({ cartCount = 0 }) {
+function Header({ cartCount: propCartCount }) {
   const navigate = useNavigate()
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [user, setUser] = useState(null)
+  const [cartCount, setCartCount] = useState(propCartCount || 0)
 
   // 로그인 상태 확인
   useEffect(() => {
@@ -47,6 +49,33 @@ function Header({ cartCount = 0 }) {
     }
   }, [])
 
+  // 장바구니 카운트 업데이트
+  useEffect(() => {
+    const updateCartCount = () => {
+      const count = getCartItemCount()
+      setCartCount(count)
+    }
+
+    updateCartCount()
+    
+    // 장바구니 변경 시 카운트 업데이트
+    const handleCartUpdate = () => {
+      updateCartCount()
+    }
+    window.addEventListener('cartUpdated', handleCartUpdate)
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
+  }, [])
+
+  // propCartCount가 변경되면 업데이트
+  useEffect(() => {
+    if (propCartCount !== undefined) {
+      setCartCount(propCartCount)
+    }
+  }, [propCartCount])
+
   const handleLoginClick = () => {
     setShowLoginModal(true)
   }
@@ -80,6 +109,10 @@ function Header({ cartCount = 0 }) {
     navigate('/')
   }
 
+  const handleCartClick = () => {
+    navigate('/cart')
+  }
+
   return (
     <>
       <header className="header">
@@ -107,7 +140,7 @@ function Header({ cartCount = 0 }) {
           </div>
 
           <div className="header-right">
-            <div className="cart-icon">
+            <div className="cart-icon" onClick={handleCartClick}>
               <span className="cart-badge">{cartCount}</span>
               🛒
             </div>

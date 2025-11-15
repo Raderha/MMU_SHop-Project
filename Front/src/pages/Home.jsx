@@ -5,11 +5,13 @@ import FilterSidebar from '../components/FilterSidebar'
 import Banner from '../components/Banner'
 import ProductCard from '../components/ProductCard'
 import api from '../utils/api'
+import { getCartItemCount } from '../utils/cart'
 
 function Home() {
   const [items, setItems] = useState([])
   const [filteredItems, setFilteredItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [cartCount, setCartCount] = useState(0)
   const [filters, setFilters] = useState({
     deals: false,
     newArrivals: false,
@@ -20,7 +22,23 @@ function Home() {
 
   useEffect(() => {
     fetchItems()
+    updateCartCount()
+    
+    // 장바구니 변경 시 카운트 업데이트
+    const handleCartUpdate = () => {
+      updateCartCount()
+    }
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
   }, [])
+
+  const updateCartCount = () => {
+    const count = getCartItemCount()
+    setCartCount(count)
+  }
 
   useEffect(() => {
     applyFilters()
@@ -75,7 +93,7 @@ function Home() {
 
   return (
     <div className="home">
-      <Header cartCount={0} />
+      <Header cartCount={cartCount} />
       
       <div className="main-container">
         <FilterSidebar onFilterChange={handleFilterChange} />

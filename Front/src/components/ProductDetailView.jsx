@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import './ProductDetailView.css'
+import { addToCart } from '../utils/cart'
 
 function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [isWishlisted, setIsWishlisted] = useState(false)
+  const [selectedSize, setSelectedSize] = useState('Medium')
 
   // 이미지 경로 가져오기
   const getImagePath = (imagePath) => {
@@ -60,11 +61,12 @@ function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
     alert(`${item.name} ${quantity}개를 구매합니다.`)
   }
 
-  // 찜 버튼 클릭
-  const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted)
-    // TODO: 찜 목록에 추가/제거 로직 구현
-    console.log('Wishlist:', !isWishlisted ? '추가' : '제거', item.name)
+  // 장바구니에 추가
+  const handleAddToCart = () => {
+    addToCart(item, quantity, selectedSize, item.color)
+    alert(`${item.name} ${quantity}개가 장바구니에 추가되었습니다.`)
+    // 장바구니 업데이트 이벤트 발생
+    window.dispatchEvent(new Event('cartUpdated'))
   }
 
   console.log("item.image:", item.image)
@@ -128,7 +130,7 @@ function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
             </div>
           )}
 
-          {/* Color와 재고를 평행으로 배치 */}
+          {/* Color, Size와 재고를 평행으로 배치 */}
           <div className="product-attributes">
             {item.color && (
               <div className="product-color-section">
@@ -142,6 +144,20 @@ function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
                 </div>
               </div>
             )}
+
+            {/* <div className="product-size-section">
+              <label className="size-label">Size:</label>
+              <select
+                className="size-select"
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+              >
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+                <option value="Extra Large">Extra Large</option>
+              </select>
+            </div> */}
 
             {item.cnt !== undefined && (
               <div className="product-stock">
@@ -173,11 +189,11 @@ function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
               Buy Now
             </button>
             <button 
-              className={`wishlist-btn ${isWishlisted ? 'active' : ''}`}
-              onClick={handleWishlistToggle}
-              title={isWishlisted ? '찜 목록에서 제거' : '찜 목록에 추가'}
+              className="add-to-cart-btn"
+              onClick={handleAddToCart}
+              title="장바구니에 추가"
             >
-              {isWishlisted ? '❤️' : '🤍'}
+              🛒 장바구니
             </button>
           </div>
         </div>
