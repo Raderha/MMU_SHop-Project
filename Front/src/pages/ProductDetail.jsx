@@ -59,39 +59,12 @@ function ProductDetail() {
 
   const fetchRelatedItems = async (currentItem) => {
     try {
-      // 모든 상품 가져오기
-      const response = await api.get('/items')
-      const allItems = response.data
-
-      // 현재 상품의 카테고리
-      const currentCategories = currentItem.category || []
-      
-      // 카테고리가 하나라도 겹치는 상품 찾기 (현재 상품 제외)
-      const related = []
-      for (const otherItem of allItems) {
-        // 현재 상품은 제외
-        if (otherItem._id === currentItem._id || otherItem.id === currentItem.id) {
-          continue
-        }
-
-        // 카테고리 비교
-        const otherCategories = otherItem.category || []
-        const hasCommonCategory = currentCategories.some(cat => 
-          otherCategories.includes(cat)
-        )
-
-        if (hasCommonCategory) {
-          related.push(otherItem)
-          // 최대 4개까지만
-          if (related.length >= 4) {
-            break
-          }
-        }
-      }
-
-      setRelatedItems(related)
+      // 서버에서 관련 상품만 가져오기 (최대 4개)
+      const response = await api.get(`/items/${id}/related?limit=4`)
+      setRelatedItems(response.data)
     } catch (err) {
       console.error('관련 상품을 불러오는 중 오류 발생:', err)
+      setRelatedItems([])
     }
   }
 

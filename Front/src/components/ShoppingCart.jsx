@@ -90,58 +90,26 @@ function ShoppingCart() {
   // 관련 상품 가져오기
   const fetchRelatedItems = async () => {
     try {
-      // 모든 상품 가져오기
-      const response = await api.get('/items')
-      const allItems = response.data
+      if (cartItems.length === 0) {
+        setRelatedItems([])
+        return
+      }
 
-      // 장바구니에 있는 상품들의 카테고리 수집
-      const cartCategories = new Set()
-      cartItems.forEach(cartItem => {
-        // 장바구니 아이템에서 카테고리 정보가 없으므로, 전체 아이템에서 찾기
-        const fullItem = allItems.find(item => (item.id || item._id) === cartItem.id)
-        if (fullItem && fullItem.category) {
-          fullItem.category.forEach(cat => cartCategories.add(cat))
-        }
-      })
-
-      // 카테고리가 겹치는 상품 찾기 (장바구니에 있는 상품 제외)
-      const cartItemIds = new Set(cartItems.map(item => item.id))
-      const related = []
+      // 장바구니의 첫 번째 상품을 기준으로 관련 상품 가져오기
+      const firstCartItem = cartItems[0]
+      const response = await api.get(`/items/${firstCartItem.id}/related?limit=4`)
       
-      for (const item of allItems) {
+      // 장바구니에 있는 상품 제외
+      const cartItemIds = new Set(cartItems.map(item => item.id))
+      const filtered = response.data.filter(item => {
         const itemId = item.id || item._id
-        // 장바구니에 없는 상품만
-        if (cartItemIds.has(itemId)) {
-          continue
-        }
-
-        // 카테고리 비교
-        const itemCategories = item.category || []
-        const hasCommonCategory = Array.from(cartCategories).some(cat => 
-          itemCategories.includes(cat)
-        )
-
-        if (hasCommonCategory) {
-          related.push(item)
-          // 최대 4개까지만
-          if (related.length >= 4) {
-            break
-          }
-        }
-      }
-
-      // 카테고리로 찾지 못한 경우, 랜덤으로 4개 선택
-      if (related.length === 0) {
-        const availableItems = allItems.filter(item => {
-          const itemId = item.id || item._id
-          return !cartItemIds.has(itemId)
-        })
-        setRelatedItems(availableItems.slice(0, 4))
-      } else {
-        setRelatedItems(related)
-      }
+        return !cartItemIds.has(itemId)
+      })
+      
+      setRelatedItems(filtered)
     } catch (err) {
       console.error('관련 상품을 불러오는 중 오류 발생:', err)
+      setRelatedItems([])
     }
   }
 
