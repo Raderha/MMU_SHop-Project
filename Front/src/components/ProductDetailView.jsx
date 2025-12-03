@@ -62,11 +62,16 @@ function ProductDetailView({ item, relatedItems, onRelatedItemClick }) {
   }
 
   // 장바구니에 추가
-  const handleAddToCart = () => {
-    addToCart(item, quantity, selectedSize, item.color)
-    alert(`${item.name} ${quantity}개가 장바구니에 추가되었습니다.`)
-    // 장바구니 업데이트 이벤트 발생
-    window.dispatchEvent(new Event('cartUpdated'))
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(item, quantity, selectedSize, item.color)
+      alert(`${item.name} ${quantity}개가 장바구니에 추가되었습니다.`)
+      // 장바구니 업데이트 이벤트 발생
+      window.dispatchEvent(new Event('cartUpdated'))
+    } catch (error) {
+      console.error('장바구니 추가 오류:', error)
+      alert(error.message || '장바구니에 추가하는 중 오류가 발생했습니다.')
+    }
   }
 
   console.log("item.image:", item.image)

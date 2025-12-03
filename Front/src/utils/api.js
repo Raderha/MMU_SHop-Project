@@ -56,5 +56,38 @@ export const authAPI = {
   }
 }
 
+// 장바구니 API
+export const cartAPI = {
+  // 장바구니 가져오기
+  getCart: async () => {
+    const response = await api.get('/cart')
+    return response.data
+  },
+
+  // 장바구니에 아이템 추가
+  addToCart: async (itemData) => {
+    const response = await api.post('/cart', itemData)
+    return response.data
+  },
+
+  // 장바구니 아이템 수량 업데이트
+  updateCartItem: async (itemId, quantity) => {
+    const response = await api.put(`/cart/${itemId}`, { quantity })
+    return response.data
+  },
+
+  // 장바구니에서 아이템 제거
+  removeFromCart: async (itemId) => {
+    const response = await api.delete(`/cart/${itemId}`)
+    return response.data
+  },
+
+  // 장바구니 비우기
+  clearCart: async () => {
+    const response = await api.delete('/cart')
+    return response.data
+  }
+}
+
 export default api
 

@@ -9,7 +9,8 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: '인증 토큰이 없습니다.' })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+    const decoded = jwt.verify(token, secret)
     const user = await User.findById(decoded.id).select('-password')
     
     if (!user) {

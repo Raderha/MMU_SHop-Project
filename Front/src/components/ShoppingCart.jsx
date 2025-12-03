@@ -36,9 +36,14 @@ function ShoppingCart() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItems.length])
 
-  const loadCart = () => {
-    const cart = getCart()
-    setCartItems(cart)
+  const loadCart = async () => {
+    try {
+      const cart = await getCart()
+      setCartItems(cart)
+    } catch (error) {
+      console.error('장바구니 로드 오류:', error)
+      setCartItems([])
+    }
   }
 
   // 이미지 경로 가져오기
@@ -60,22 +65,37 @@ function ShoppingCart() {
   }
 
   // 수량 변경
-  const handleQuantityChange = (itemId, size, color, newQuantity) => {
-    updateCartItemQuantity(itemId, size, color, newQuantity)
-    loadCart()
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    try {
+      await updateCartItemQuantity(itemId, newQuantity)
+      await loadCart()
+    } catch (error) {
+      console.error('수량 변경 오류:', error)
+      alert(error.message || '수량 변경 중 오류가 발생했습니다.')
+    }
   }
 
   // 아이템 제거
-  const handleRemoveItem = (itemId, size, color) => {
-    removeFromCart(itemId, size, color)
-    loadCart()
+  const handleRemoveItem = async (itemId) => {
+    try {
+      await removeFromCart(itemId)
+      await loadCart()
+    } catch (error) {
+      console.error('아이템 제거 오류:', error)
+      alert(error.message || '아이템 제거 중 오류가 발생했습니다.')
+    }
   }
 
   // 모든 아이템 제거
-  const handleRemoveAll = () => {
+  const handleRemoveAll = async () => {
     if (window.confirm('장바구니의 모든 상품을 제거하시겠습니까?')) {
-      clearCart()
-      loadCart()
+      try {
+        await clearCart()
+        await loadCart()
+      } catch (error) {
+        console.error('장바구니 비우기 오류:', error)
+        alert(error.message || '장바구니 비우기 중 오류가 발생했습니다.')
+      }
     }
   }
 
@@ -97,13 +117,13 @@ function ShoppingCart() {
 
       // 장바구니의 첫 번째 상품을 기준으로 관련 상품 가져오기
       const firstCartItem = cartItems[0]
-      const response = await api.get(`/items/${firstCartItem.id}/related?limit=4`)
+      const response = await api.get(`/items/${firstCartItem.itemId}/related?limit=4`)
       
       // 장바구니에 있는 상품 제외
-      const cartItemIds = new Set(cartItems.map(item => item.id))
+      const cartItemIds = new Set(cartItems.map(item => item.itemId))
       const filtered = response.data.filter(item => {
         const itemId = item.id || item._id
-        return !cartItemIds.has(itemId)
+        return !cartItemIds.has(String(itemId))
       })
       
       setRelatedItems(filtered)
@@ -155,7 +175,7 @@ function ShoppingCart() {
                 {cartItems.map((item, index) => {
                   const itemTotal = item.price * item.quantity
                   return (
-                    <div key={`${item.id}-${item.size}-${item.color}-${index}`} className="cart-item-card">
+                    <div key={`${item.itemId}-${index}`} className="cart-item-card">
                       <div className="cart-item-image">
                         <img
                           src={getImagePath(item.image)}
@@ -168,8 +188,6 @@ function ShoppingCart() {
                       <div className="cart-item-details">
                         <h3 className="cart-item-name">{item.name}</h3>
                         <div className="cart-item-info">
-                          <span>Color: {item.color}</span>
-                          <span>Size: {item.size}</span>
                           <span>Price: {formatPrice(item.price)} / per item</span>
                         </div>
                       </div>
@@ -179,16 +197,16 @@ function ShoppingCart() {
                           <select
                             className="quantity-select"
                             value={item.quantity}
-                            onChange={(e) => handleQuantityChange(item.id, item.size, item.color, parseInt(e.target.value))}
+                            onChange={(e) => handleQuantityChange(item.itemId, parseInt(e.target.value))}
                           >
-                            {Array.from({ length: Math.min(item.maxQuantity, 10) }, (_, i) => i + 1).map(num => (
+                            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
                               <option key={num} value={num}>{num}</option>
                             ))}
                           </select>
                         </div>
                         <button
                           className="cart-item-remove-btn"
-                          onClick={() => handleRemoveItem(item.id, item.size, item.color)}
+                          onClick={() => handleRemoveItem(item.itemId)}
                           title="제거"
                         >
                           ✕

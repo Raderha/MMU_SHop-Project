@@ -35,9 +35,14 @@ function Home() {
     }
   }, [])
 
-  const updateCartCount = () => {
-    const count = getCartItemCount()
-    setCartCount(count)
+  const updateCartCount = async () => {
+    try {
+      const count = await getCartItemCount()
+      setCartCount(count)
+    } catch (error) {
+      console.error('장바구니 개수 조회 오류:', error)
+      setCartCount(0)
+    }
   }
 
   useEffect(() => {

@@ -21,6 +21,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/products', require('./routes/products'))
 app.use('/api/users', require('./routes/users'))
 app.use('/api/items', require('./routes/items'))
+app.use('/api/cart', require('./routes/cart'))
 
 // 기본 라우트
 app.get('/', (req, res) => {
